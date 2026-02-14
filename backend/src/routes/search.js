@@ -1,45 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { supabase } = require('../services/supabase');
-
-// GET /api/search
-// Query params:
-//   from        (required) YYYY-MM-DD
-//   to          (required) YYYY-MM-DD
-//   lat         (optional) latitude
-//   lng         (optional) longitude
-//   radius      (optional) km, default 25
-//   genres      (optional) comma-separated e.g. "musical,comedy"
-//   venue_types (optional) comma-separated e.g. "west_end,fringe"
-//   regions     (optional) comma-separated e.g. "london,south_east"
-//   max_price   (optional) number
-//   free_only   (optional) true/false
-//   accessible  (optional) true/false
+const { supabaseAdmin } = require('../services/supabase');
 
 router.get('/', async (req, res) => {
   try {
     const {
-      from,
-      to,
-      lat,
-      lng,
-      radius = 25,
-      genres,
-      venue_types,
-      regions,
-      max_price,
-      free_only,
-      accessible
+      from, to, lat, lng,
+      radius = 25, genres, venue_types,
+      regions, max_price, free_only, accessible
     } = req.query;
 
-    // Validate required fields
     if (!from || !to) {
       return res.status(400).json({
         error: 'from and to dates are required (YYYY-MM-DD format)'
       });
     }
 
-    // Build the function call parameters
     const params = {
       search_from: from,
       search_to: to,
@@ -54,7 +30,7 @@ router.get('/', async (req, res) => {
       accessible_only: accessible === 'true'
     };
 
-    const { data, error } = await supabase.rpc('search_performances', params);
+    const { data, error } = await supabaseAdmin.rpc('search_performances', params);
 
     if (error) throw error;
 
