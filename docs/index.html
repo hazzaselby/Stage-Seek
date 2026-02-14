@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Theatre Search — Coming Soon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: #0a0a0a;
+      color: #fff;
+      font-family: Georgia, serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .curtain-left, .curtain-right {
+      position: fixed;
+      top: 0;
+      width: 120px;
+      height: 100vh;
+      background: #8B0000;
+      opacity: 0.4;
+    }
+    .curtain-left { left: 0; border-radius: 0 0 60px 0; }
+    .curtain-right { right: 0; border-radius: 0 0 0 60px; }
+    .content { max-width: 600px; position: relative; z-index: 1; }
+    .icon { font-size: 4rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+    .tagline { font-size: 1.2rem; color: #ccc; margin-bottom: 2rem; font-style: italic; }
+    p { color: #aaa; line-height: 1.7; margin-bottom: 2rem; }
+    .notify {
+      display: inline-block;
+      border: 1px solid #8B0000;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="curtain-left"></div>
+  <div class="curtain-right"></div>
+  <div class="content">
+    <div class="icon">🎭</div>
+    <h1>UK Theatre Search</h1>
+    <p class="tagline">Every performance. Every venue. One search.</p>
+    <p>A centralised search platform for UK theatre productions — from West End to fringe, amateur to touring. Find shows by date, location, genre and more.</p>
+    <span class="notify">Coming Soon</span>
+  </div>
+</body>
+</html>
