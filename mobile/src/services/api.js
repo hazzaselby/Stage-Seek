@@ -15,6 +15,8 @@ export async function searchPerformances(params) {
   if (params.max_price) query.append('max_price', params.max_price);
   if (params.free_only) query.append('free_only', 'true');
   if (params.accessible) query.append('accessible', 'true');
+  query.append('limit', '100');
+
 
   const response = await fetch(`${API_BASE}/api/search?${query}`);
   if (!response.ok) throw new Error('Search failed');
