@@ -16,6 +16,7 @@ export async function searchPerformances(params) {
   if (params.free_only) query.append('free_only', 'true');
   if (params.accessible) query.append('accessible', 'true');
   query.append('limit', '100');
+  if (params.offset !== undefined && params.offset !== null) query.append('offset', String(params.offset));
 
 
   const response = await fetch(`${API_BASE}/api/search?${query}`);

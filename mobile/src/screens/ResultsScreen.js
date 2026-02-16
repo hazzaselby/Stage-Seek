@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../services/theme';
+import { searchPerformances } from '../services/api';
+
 
 const SORT_OPTIONS = ['Date', 'Price', 'Distance'];
 
@@ -51,7 +53,10 @@ function ShowCard({ item, onPress }) {
 }
 
 export default function ResultsScreen({ route, navigation }) {
-  const { results = [], query } = route.params;
+  const { initialResults = [], searchParams } = route.params;
+
+  const [results, setResults] = useState(initialResults);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [sortBy, setSortBy] = useState('Date');
 
   const sorted = [...results].sort((a, b) => {
@@ -61,6 +66,23 @@ export default function ResultsScreen({ route, navigation }) {
     return 0;
   });
 
+async function handleLoadMore() {
+  if (loadingMore) return;
+
+  setLoadingMore(true);
+  try {
+    const response = await searchPerformances({
+      ...searchParams,
+      offset: results.length,
+    });
+
+    setResults(prev => [...prev, ...response.results]);
+  } finally {
+    setLoadingMore(false);
+  }
+}
+
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -68,7 +90,7 @@ export default function ResultsScreen({ route, navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.resultCount}>{results.length} shows found</Text>
+        <Text style={styles.resultCount}>{results.length}+ shows </Text>
       </View>
 
       {/* Sort bar */}
@@ -97,17 +119,31 @@ export default function ResultsScreen({ route, navigation }) {
         )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListFooterComponent={
+  <View style={{ paddingVertical: 12 }}>
+    <TouchableOpacity style={styles.loadMoreBtn} onPress={handleLoadMore} disabled={loadingMore}>
+      {loadingMore ? (
+        <ActivityIndicator />
+      ) : (
+        <Text style={styles.loadMoreText}>Load more</Text>
+      )}
+    </TouchableOpacity>
+  </View>
+}
+
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyEmoji}>🎭</Text>
             <Text style={styles.emptyText}>No shows found</Text>
             <Text style={styles.emptySubtext}>Try adjusting your filters</Text>
-          </View>
+          </View> 
+          
         }
       />
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
@@ -143,4 +179,14 @@ const styles = StyleSheet.create({
   emptyEmoji: { fontSize: 48, marginBottom: 12 },
   emptyText: { fontSize: theme.fontSize.lg, color: theme.colors.text, fontWeight: '600' },
   emptySubtext: { fontSize: theme.fontSize.md, color: theme.colors.textSecondary, marginTop: 4 },
+  loadMoreBtn: {
+  backgroundColor: theme.colors.surface,
+  borderWidth: 1,
+  borderColor: theme.colors.border,
+  padding: theme.spacing.md,
+  borderRadius: theme.borderRadius.md,
+  alignItems: 'center',
+},
+loadMoreText: { color: theme.colors.text, fontWeight: '600' },
+
 });

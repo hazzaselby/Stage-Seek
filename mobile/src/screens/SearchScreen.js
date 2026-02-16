@@ -44,21 +44,28 @@ export default function SearchScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const results = await searchPerformances({
-        from: fromDate,
-        to: toDate,
-        genres: selectedGenres,
-        regions: selectedRegions,
-        max_price: maxPrice || null,
-        free_only: freeOnly,
-        accessible,
-      });
-      navigation.navigate('Results', { results: results.results, query: { fromDate, toDate } });
-    } catch (err) {
-      Alert.alert('Search failed', 'Please check your connection and try again');
-    } finally {
-      setLoading(false);
-    }
+  const searchParams = {
+    from: fromDate,
+    to: toDate,
+    genres: selectedGenres,
+    regions: selectedRegions,
+    max_price: maxPrice || null,
+    free_only: freeOnly,
+    accessible,
+  };
+
+  const response = await searchPerformances(searchParams);
+
+  navigation.navigate('Results', {
+    initialResults: response.results,
+    searchParams,
+  });
+} catch (err) {
+  Alert.alert('Search failed', 'Please check your connection and try again');
+} finally {
+  setLoading(false);
+}
+
   }
 
   return (
