@@ -4,11 +4,13 @@ const { supabaseAdmin } = require('../services/supabase');
 
 router.get('/', async (req, res) => {
   try {
-    const {
-      from, to, lat, lng,
-      radius = 25, genres, venue_types,
-      regions, max_price, free_only, accessible
-    } = req.query;
+const {
+  from, to, lat, lng,
+  radius = 25, genres, venue_types,
+  regions, max_price, free_only, accessible,
+  limit = 100
+} = req.query;
+
 
     if (!from || !to) {
       return res.status(400).json({
@@ -27,7 +29,8 @@ router.get('/', async (req, res) => {
       regions_filter: regions ? regions.split(',') : null,
       max_price: max_price ? parseFloat(max_price) : null,
       free_only: free_only === 'true',
-      accessible_only: accessible === 'true'
+      accessible_only: accessible === 'true',
+      result_limit: parseInt(limit, 10),
     };
 
     const { data, error } = await supabaseAdmin.rpc('search_performances', params);
