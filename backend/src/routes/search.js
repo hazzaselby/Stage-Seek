@@ -8,7 +8,8 @@ const {
   from, to, lat, lng,
   radius = 25, genres, venue_types,
   regions, max_price, free_only, accessible,
-  limit = 100
+  limit = 100,
+  offset = 0
 } = req.query;
 
 
@@ -31,6 +32,7 @@ const {
       free_only: free_only === 'true',
       accessible_only: accessible === 'true',
       result_limit: Math.min(parseInt(limit, 10) || 100, 200),
+      result_offset: Math.max(parseInt(offset, 10) || 0, 0),
     };
 
     const { data, error } = await supabaseAdmin.rpc('search_performances', params);
