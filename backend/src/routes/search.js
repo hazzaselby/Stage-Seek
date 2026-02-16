@@ -30,7 +30,7 @@ const {
       max_price: max_price ? parseFloat(max_price) : null,
       free_only: free_only === 'true',
       accessible_only: accessible === 'true',
-      result_limit: parseInt(limit, 10),
+      result_limit: Math.min(parseInt(limit, 10) || 100, 200),
     };
 
     const { data, error } = await supabaseAdmin.rpc('search_performances', params);
