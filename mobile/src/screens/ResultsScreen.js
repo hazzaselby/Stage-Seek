@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../services/theme';
 import { searchPerformances } from '../services/api';
 
+const PAGE_SIZE = 100;
 
 const SORT_OPTIONS = ['Date', 'Price', 'Distance'];
 
@@ -58,6 +59,8 @@ export default function ResultsScreen({ route, navigation }) {
   const [results, setResults] = useState(initialResults);
   const [loadingMore, setLoadingMore] = useState(false);
   const [sortBy, setSortBy] = useState('Date');
+  const [hasMore, setHasMore] = useState(initialResults.length === PAGE_SIZE);
+
 
   const sorted = [...results].sort((a, b) => {
     if (sortBy === 'Date') return new Date(a.run_start) - new Date(b.run_start);
@@ -76,7 +79,20 @@ async function handleLoadMore() {
       offset: results.length,
     });
 
-    setResults(prev => [...prev, ...response.results]);
+  setResults(prev => {
+  const combined = [...prev, ...response.results];
+  const unique = combined.filter(
+    (item, index, self) =>
+      index === self.findIndex(x => x.performance_id === item.performance_id)
+  );
+  return unique;
+});
+
+
+    if (response.results.length < PAGE_SIZE) {
+  setHasMore(false);
+}
+
   } finally {
     setLoadingMore(false);
   }
@@ -120,16 +136,22 @@ async function handleLoadMore() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
-  <View style={{ paddingVertical: 12 }}>
-    <TouchableOpacity style={styles.loadMoreBtn} onPress={handleLoadMore} disabled={loadingMore}>
-      {loadingMore ? (
-        <ActivityIndicator />
-      ) : (
-        <Text style={styles.loadMoreText}>Load more</Text>
-      )}
-    </TouchableOpacity>
-  </View>
-}
+          hasMore ? (
+            <View style={{ paddingVertical: 12 }}>
+              <TouchableOpacity
+                style={styles.loadMoreBtn}
+                onPress={handleLoadMore}
+                disabled={loadingMore}
+              >
+                {loadingMore ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={styles.loadMoreText}>Load more</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : null
+        }
 
         ListEmptyComponent={
           <View style={styles.empty}>
