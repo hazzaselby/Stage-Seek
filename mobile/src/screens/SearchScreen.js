@@ -57,9 +57,11 @@ export default function SearchScreen({ navigation }) {
   const response = await searchPerformances(searchParams);
 
   navigation.navigate('Results', {
-    initialResults: response.results,
-    searchParams,
-  });
+  initialResults: response.results,
+  total: response.total,
+  searchParams,
+});
+
 } catch (err) {
   Alert.alert('Search failed', 'Please check your connection and try again');
 } finally {

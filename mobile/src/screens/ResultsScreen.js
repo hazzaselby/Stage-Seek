@@ -54,13 +54,13 @@ function ShowCard({ item, onPress }) {
 }
 
 export default function ResultsScreen({ route, navigation }) {
-  const { initialResults = [], searchParams } = route.params;
+  const { initialResults = [], searchParams, total: initialTotal = null } = route.params;
 
   const [results, setResults] = useState(initialResults);
   const [loadingMore, setLoadingMore] = useState(false);
   const [sortBy, setSortBy] = useState('Date');
   const [hasMore, setHasMore] = useState(initialResults.length === PAGE_SIZE);
-
+  const [total, setTotal] = useState(initialTotal);
 
   const sorted = [...results].sort((a, b) => {
     if (sortBy === 'Date') return new Date(a.run_start) - new Date(b.run_start);
@@ -78,6 +78,8 @@ async function handleLoadMore() {
       ...searchParams,
       offset: results.length,
     });
+
+    setTotal(response.total);
 
   setResults(prev => {
   const combined = [...prev, ...response.results];
@@ -106,7 +108,9 @@ async function handleLoadMore() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.resultCount}>{results.length}+ shows </Text>
+        <Text style={styles.resultCount}>
+        {total ? `${results.length} of ${total} shows` : `${results.length} shows`}
+        </Text>
       </View>
 
       {/* Sort bar */}

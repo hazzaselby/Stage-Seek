@@ -39,11 +39,14 @@ const {
 
     if (error) throw error;
 
+    const total = data && data.length > 0 ? data[0].total_count : 0;
+
     res.json({
-      results: data,
-      count: data.length,
-      query: { from, to, ...req.query }
-    });
+     results: (data || []).map(({ total_count, ...row }) => row),
+      count: data ? data.length : 0,
+     total,
+     query: { from, to, ...req.query }
+});
 
   } catch (err) {
     console.error('Search error:', err);
